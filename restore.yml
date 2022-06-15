@@ -1,0 +1,72 @@
+---
+- hosts: localhost
+  gather_facts: true
+  vars:
+    - db_name: 'effect_defult'
+    - s3_bucket: effect-snapshooter-backups;
+    - restore_db: ''
+    - client: '127.0.0.1'
+    - login_password: '5q=LDm%+J39cm2v8'
+    - old_site: 'camdenartcentre.org'
+    - new_site: 'camden.test'
+    - mode: ''
+  tasks:
+    - name: "install the package, force upgrade"
+      when: mode == "dep_check"
+      pip:
+        name: pip
+        executable: pip3
+        state: latest
+    - name: “Installing pymysql for dependency”
+      when: mode == "dep_check"
+      pip:
+        name: pymysql
+        state: present
+    - name: Install gzip if required
+      when: mode == "dep_check"
+      homebrew:
+        name: gzip
+        state: present
+    - name: Install awscli if required
+      when: mode == "dep_check"
+      homebrew:
+        name: awscli
+        state: present
+    - name: Removeing tmp folder
+      when: mode != "dep_check"
+      file:
+        state: absent
+        path: tmp
+    - name: Creates tmp directory
+      when: mode != "dep_check"
+      file:
+        path: tmp
+        state: directory
+    - name: Downloading backup from S3
+      when: mode != "dep_check"
+      amazon.aws.aws_s3:
+        bucket: "effect-snapshooter-backups"
+        profile: effectReadOnlyBackups
+        object: "{{ restore_db }}"
+        dest: tmp/restore.sql.gz
+        mode: get
+    - name: unpacking the backup
+      when: mode != "dep_check"
+      shell: "gzip -dk tmp/restore.sql.gz"
+    - name: Importing the DB
+      when: mode != "dep_check"
+      mysql_db:
+         name: "{{db_name}}"
+         state: import
+         target: "tmp/restore.sql"
+         login_host: "{{db_host}}"
+         login_user: "{{db_user}}"
+         login_password: '{{db_password}}'
+    - name: Removeing tmp folder
+      when: mode != "dep_check"
+      file:
+        state: absent
+        path: tmp
+    - name: Running find and replace
+      when: mode != "dep_check"
+      shell: "echo wp search-replace {{old_site}} {{new_site}}"
