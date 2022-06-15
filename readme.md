@@ -13,7 +13,7 @@ $sudo python3 -m pip install --upgrade pip
 
 ### Setup the alias
 
-echo "alias rfb='$(pwd)/restore.sh'" >> ~/.zshrc
+$echo "alias rfb='$(pwd)/restore.sh'" >> ~/.zshrc
 
 ### Useing
 Drop a shell into an project thats already been setup and run:
