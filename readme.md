@@ -26,7 +26,7 @@ Some project need to use a .env and have the following environments variables ad
 PRODUCITON_URL
 BACKUP_BUCKET
 
-Ontop of the normal;
+On top of the normal;
 
 DATABASE_HOST
 DATABASE_USER
