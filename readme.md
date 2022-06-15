@@ -2,16 +2,16 @@
 
 ## Getting installed
 
-###Setup AWS keys
+### Setup AWS keys
 
 $echo "[effectReadOnlyBackups]" >> ~/.aws/credentials && echo "aws_access_key_id = AKIAQ" >> ~/.aws/credentials && echo "aws_secret_access_key = KdBjP5gCgGTHCxVQVctXAhoak" >> ~/.aws/credentials
 
-###install software dependencies
+### Install software dependencies
 $brew install ansible
 
 $sudo python3 -m pip install --upgrade pip
 
-###Setup the alias
+### Setup the alias
 
 echo "alias rfb='$(pwd)/restore.sh'" >> ~/.zshrc
 
